@@ -452,12 +452,15 @@ const styles = {
     background: 'rgba(0,0,0,0.9)', zIndex: 100, display: 'flex', justifyContent: 'center', alignItems: 'center'
   },
   adminModal: {
-    background: '#1a1a24', width: '80%', maxWidth: '800px', height: '80%',
+    background: '#1a1a24', width: '90%', maxWidth: '800px', maxHeight: '90vh',
     borderRadius: '20px', padding: '30px', border: '1px solid var(--neon-purple)',
-    display: 'flex', flexDirection: 'column'
+    display: 'flex', flexDirection: 'column', overflow: 'hidden',
+    boxShadow: '0 0 50px rgba(188, 19, 254, 0.3)'
   },
   adminScrollArea: {
-    flex: 1, overflowY: 'auto', paddingRight: '10px'
+    flex: 1, overflowY: 'auto', paddingRight: '15px', minHeight: 0,
+    scrollbarWidth: 'thin',
+    scrollbarColor: 'var(--neon-purple) rgba(0,0,0,0.2)'
   },
   catItem: {
     padding: '15px 20px', background: 'rgba(255,255,255,0.05)', borderRadius: '15px', 
