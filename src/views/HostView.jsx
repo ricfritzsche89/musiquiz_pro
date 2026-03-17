@@ -10,6 +10,7 @@ import { Plus, Trash2, Edit2, Check, X } from 'lucide-react';
 function HostView({ token }) {
   const { session, players, updateSession } = useGameLogic('default');
   const [timer, setTimer] = useState(60);
+  const [showAdmin, setShowAdmin] = useState(false);
   const [dbData, setDbData] = useState({ categories: [] });
   const [loading, setLoading] = useState(false);
   const [newCatName, setNewCatName] = useState('');
