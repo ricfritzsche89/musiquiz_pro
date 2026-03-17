@@ -14,6 +14,7 @@ const scopes = [
 
 // Hilfsfunktionen für PKCE
 export async function redirectToAuthCodeFlow() {
+  console.log("Starting Spotify PKCE Auth Flow (v2.0.1)...");
   const verifier = generateCodeVerifier(128);
   const challenge = await generateCodeChallenge(verifier);
 

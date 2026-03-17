@@ -32,6 +32,8 @@ function Login() {
       <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.9rem' }}>
         Hinweis: Nur der Host benötigt Spotify Premium zum Abspielen.
       </p>
+      <span style={{ fontSize: '0.7rem', opacity: 0.3, color: '#fff' }}>Auth Engine: PKCE v2.0.1</span>
+
     </div>
   );
 }
