@@ -1,5 +1,5 @@
-import React from 'react';
 import { redirectToAuthCodeFlow } from '../spotify';
+import { motion } from 'framer-motion';
 
 function Login() {
   const handleLogin = (e) => {

@@ -10,12 +10,13 @@ import { Plus, Trash2, Edit2, Check, X } from 'lucide-react';
 function HostView({ token }) {
   const { session, players, updateSession } = useGameLogic('default');
   const [timer, setTimer] = useState(60);
-  const [showAdmin, setShowAdmin] = useState(false);
   const [dbData, setDbData] = useState({ categories: [] });
   const [loading, setLoading] = useState(false);
   const [newCatName, setNewCatName] = useState('');
+  const [newCatUrl, setNewCatUrl] = useState('');
   const [editingCatId, setEditingCatId] = useState(null);
   const [editCatName, setEditCatName] = useState('');
+  const [editCatUrl, setEditCatUrl] = useState('');
   const playerRef = useRef(null);
   
   // URL für Controller (GH Pages oder Local)
@@ -63,14 +64,24 @@ function HostView({ token }) {
   // KATEGORIE AKTIONEN
   const handleAddCategory = async () => {
     if (!newCatName.trim()) return;
-    const { error } = await supabase.from('categories').insert([{ name: newCatName }]);
+    const { error } = await supabase.from('categories').insert([{ 
+        name: newCatName, 
+        playlist_url: newCatUrl 
+    }]);
     if (error) alert("Fehler: " + error.message);
-    else { setNewCatName(''); fetchDB(); }
+    else { 
+        setNewCatName(''); 
+        setNewCatUrl('');
+        fetchDB(); 
+    }
   };
 
   const handleUpdateCategory = async (id) => {
     if (!editCatName.trim()) return;
-    const { error } = await supabase.from('categories').update({ name: editCatName }).eq('id', id);
+    const { error } = await supabase.from('categories').update({ 
+        name: editCatName,
+        playlist_url: editCatUrl
+    }).eq('id', id);
     if (error) alert("Fehler: " + error.message);
     else { setEditingCatId(null); fetchDB(); }
   };
@@ -126,13 +137,17 @@ function HostView({ token }) {
                         {/* 1. NEUE KATEGORIE ANLEGEN */}
                         <div className="glass-panel" style={{padding:'20px', marginBottom:'20px', border:'1px solid var(--neon-purple)'}}>
                             <h3>🆕 Neue Kategorie</h3>
-                            <div style={{display:'flex', gap:'10px', marginTop:'10px'}}>
+                            <div style={{display:'flex', flexDirection:'column', gap:'10px', marginTop:'10px'}}>
                                 <input 
                                     type="text" value={newCatName} onChange={(e) => setNewCatName(e.target.value)}
-                                    placeholder="Name (z.B. Disney)" style={{...styles.input, flex: 1, textAlign: 'left'}}
+                                    placeholder="Name (z.B. Disney)" style={{...styles.input, textAlign: 'left'}}
                                 />
-                                <button onClick={handleAddCategory} style={{...styles.joinButton, width:'auto', background:'var(--neon-purple)', color:'#fff', padding:'0 20px'}}>
-                                    <Plus size={20} />
+                                <input 
+                                    type="text" value={newCatUrl} onChange={(e) => setNewCatUrl(e.target.value)}
+                                    placeholder="Spotify Playlist URL (optional)" style={{...styles.input, textAlign: 'left'}}
+                                />
+                                <button onClick={handleAddCategory} style={{...styles.joinButton, width:'100%', background:'var(--neon-purple)', color:'#fff'}}>
+                                    <Plus size={20} style={{verticalAlign:'middle', marginRight:'5px'}} /> Kategorie anlegen
                                 </button>
                             </div>
                         </div>
@@ -150,27 +165,43 @@ function HostView({ token }) {
                         {/* 3. KATEGORIEN LISTE */}
                         <h3>Deine Quiz-Inhalte ({dbData.categories?.length || 0})</h3>
                         {dbData.categories?.map(cat => (
-                            <div key={cat.id} style={styles.catItem}>
+                            <div key={cat.id} style={{...styles.catItem, flexDirection:'column', alignItems:'flex-start', gap: '10px'}}>
                                 {editingCatId === cat.id ? (
-                                    <div style={{display:'flex', gap:'10px', width:'100%'}}>
+                                    <div style={{display:'flex', flexDirection: 'column', gap:'10px', width:'100%'}}>
                                         <input 
                                             type="text" value={editCatName} onChange={(e) => setEditCatName(e.target.value)}
-                                            style={{...styles.input, flex: 1, textAlign: 'left', padding:'5px 10px'}}
+                                            style={{...styles.input, textAlign: 'left', padding:'5px 10px'}}
                                         />
-                                        <button onClick={() => handleUpdateCategory(cat.id)} style={{background:'none', border:'none', color:'#00ff73'}}><Check /></button>
-                                        <button onClick={() => setEditingCatId(null)} style={{background:'none', border:'none', color:'#ff2a2a'}}><X /></button>
+                                        <input 
+                                            type="text" value={editCatUrl} onChange={(e) => setEditCatUrl(e.target.value)}
+                                            placeholder="Playlist URL"
+                                            style={{...styles.input, textAlign: 'left', padding:'5px 10px'}}
+                                        />
+                                        <div style={{display:'flex', gap:'10px', justifyContent:'flex-end'}}>
+                                            <button onClick={() => handleUpdateCategory(cat.id)} style={{background:'none', border:'none', color:'#00ff73'}}><Check /></button>
+                                            <button onClick={() => setEditingCatId(null)} style={{background:'none', border:'none', color:'#ff2a2a'}}><X /></button>
+                                        </div>
                                     </div>
                                 ) : (
-                                    <>
+                                    <div style={{display:'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center'}}>
                                         <div>
                                             <strong>{cat.name}</strong> 
                                             <span style={{opacity:0.6, marginLeft:'10px', fontSize:'0.8rem'}}>({cat.songs?.length || 0} Songs)</span>
+                                            {cat.playlist_url && (
+                                                <div style={{fontSize:'0.7rem', color: 'var(--neon-blue)', marginTop: '5px', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                                                    🔗 {cat.playlist_url}
+                                                </div>
+                                            )}
                                         </div>
                                         <div style={{display:'flex', gap:'15px', alignItems:'center'}}>
-                                            <button onClick={() => { setEditingCatId(cat.id); setEditCatName(cat.name); }} style={styles.iconBtn}><Edit2 size={16} /></button>
+                                            <button onClick={() => { 
+                                                setEditingCatId(cat.id); 
+                                                setEditCatName(cat.name); 
+                                                setEditCatUrl(cat.playlist_url || '');
+                                            }} style={styles.iconBtn}><Edit2 size={16} /></button>
                                             <button onClick={() => handleDeleteCategory(cat.id)} style={{...styles.iconBtn, color:'#ff4444'}}><Trash2 size={16} /></button>
                                         </div>
-                                    </>
+                                    </div>
                                 )}
                             </div>
                         ))}
