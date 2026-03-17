@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getTokenFromUrl } from './spotify';
+import { getAccessToken } from './spotify';
 import { supabase } from './supabaseJS';
 import Login from './components/Login';
 import SpotifyPlayer from './components/SpotifyPlayer';
@@ -10,18 +10,27 @@ function App() {
   const [session, setSession] = useState(null);
 
   useEffect(() => {
-    // 1. Spotify Token aus URL extrahieren
-    const hash = getTokenFromUrl();
-    window.location.hash = "";
-    const _token = hash.access_token;
+    const handleAuth = async () => {
+      // 1. Spotify Code aus URL extrahieren (PKCE Flow)
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
 
-    if (_token) {
-      setToken(_token);
-      localStorage.setItem("spotify_token", _token);
-    } else {
-      const savedToken = localStorage.getItem("spotify_token");
-      if (savedToken) setToken(savedToken);
-    }
+      if (code) {
+        // Code gegen Token tauschen
+        const _token = await getAccessToken(code);
+        if (_token) {
+          setToken(_token);
+          localStorage.setItem("spotify_token", _token);
+          // URL säubern
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      } else {
+        const savedToken = localStorage.getItem("spotify_token");
+        if (savedToken) setToken(savedToken);
+      }
+    };
+
+    handleAuth();
 
     // 2. Supabase Realtime Session abonnieren
     const channel = supabase.channel('musiquiz_game')
