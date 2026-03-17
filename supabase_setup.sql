@@ -22,11 +22,17 @@ CREATE TABLE IF NOT EXISTS public.songs (
 -- 3. Game Session (Realtime State)
 -- Wir nutzen eine Tabelle für den globalen State, den Realtime synchronisiert
 CREATE TABLE IF NOT EXISTS public.game_sessions (
-    id TEXT PRIMARY KEY, -- z.B. 'default' oder ein Raum-Code
+    id TEXT PRIMARY KEY, 
     phase TEXT DEFAULT 'lobby',
     current_song_index INTEGER DEFAULT 0,
     rater_id TEXT,
     players JSONB DEFAULT '{}'::jsonb,
+    category_votes JSONB DEFAULT '{}'::jsonb,
+    selected_category TEXT,
+    songs JSONB DEFAULT '[]'::jsonb,
+    mc_options JSONB DEFAULT '[]'::jsonb,
+    mc_correct BOOLEAN,
+    wrong_answer TEXT,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
