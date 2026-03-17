@@ -1,7 +1,9 @@
 // Spotify OAuth Konfiguration
 const authEndpoint = "https://accounts.spotify.com/authorize";
 const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-const redirectUri = import.meta.env.VITE_REDIRECT_URI;
+
+// Erkennt automatisch, ob wir auf GitHub Pages oder lokal sind
+const redirectUri = window.location.origin + window.location.pathname; 
 
 // Benötigte Berechtigungen (Scopes) für den Web Player
 const scopes = [
