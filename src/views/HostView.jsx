@@ -5,6 +5,7 @@ import { useGameLogic } from '../hooks/useGameLogic';
 import SpotifyPlayer from '../components/SpotifyPlayer';
 import { migrateLocalDB } from '../utils/migrateDB';
 import { supabase } from '../supabaseJS';
+import { Plus, Trash2, Edit2, Check, X } from 'lucide-react';
 
 function HostView({ token }) {
   const { session, players, updateSession } = useGameLogic('default');
@@ -12,6 +13,9 @@ function HostView({ token }) {
   const [showAdmin, setShowAdmin] = useState(false);
   const [dbData, setDbData] = useState({ categories: [] });
   const [loading, setLoading] = useState(false);
+  const [newCatName, setNewCatName] = useState('');
+  const [editingCatId, setEditingCatId] = useState(null);
+  const [editCatName, setEditCatName] = useState('');
   const playerRef = useRef(null);
   
   // URL für Controller (GH Pages oder Local)
@@ -56,15 +60,48 @@ function HostView({ token }) {
     if (showAdmin) fetchDB();
   }, [showAdmin]);
 
+  // KATEGORIE AKTIONEN
+  const handleAddCategory = async () => {
+    if (!newCatName.trim()) return;
+    const { error } = await supabase.from('categories').insert([{ name: newCatName }]);
+    if (error) alert("Fehler: " + error.message);
+    else { setNewCatName(''); fetchDB(); }
+  };
+
+  const handleUpdateCategory = async (id) => {
+    if (!editCatName.trim()) return;
+    const { error } = await supabase.from('categories').update({ name: editCatName }).eq('id', id);
+    if (error) alert("Fehler: " + error.message);
+    else { setEditingCatId(null); fetchDB(); }
+  };
+
+  const handleDeleteCategory = async (id) => {
+    if (confirm("Kategorie wirklich löschen? Alle zugehörigen Songs werden ebenfalls entfernt.")) {
+      const { error } = await supabase.from('categories').delete().eq('id', id);
+      if (error) alert("Fehler: " + error.message);
+      else fetchDB();
+    }
+  };
+
+  const fetchDB = async () => {
+    const { data: catData } = await supabase.from('categories').select('*, songs(*)').order('name');
+    if (catData) setDbData({ categories: catData });
+  };
+
   const handleMigration = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     setLoading(true);
     const reader = new FileReader();
     reader.onload = async (res) => {
-      const dbContent = JSON.parse(res.target.result);
-      const results = await migrateLocalDB(dbContent, token);
-      alert(`Migration fertig! ${results.added} Songs hinzugefügt.`);
+      try {
+        const dbContent = JSON.parse(res.target.result);
+        const results = await migrateLocalDB(dbContent, token);
+        alert(`Migration fertig! ${results.added} Songs hinzugefügt.`);
+        fetchDB();
+      } catch (err) {
+        alert("Fehler beim Import: " + err.message);
+      }
       setLoading(false);
       setShowAdmin(false);
     };
@@ -86,6 +123,21 @@ function HostView({ token }) {
                     </div>
                     
                     <div style={styles.adminScrollArea}>
+                        {/* 1. NEUE KATEGORIE ANLEGEN */}
+                        <div className="glass-panel" style={{padding:'20px', marginBottom:'20px', border:'1px solid var(--neon-purple)'}}>
+                            <h3>🆕 Neue Kategorie</h3>
+                            <div style={{display:'flex', gap:'10px', marginTop:'10px'}}>
+                                <input 
+                                    type="text" value={newCatName} onChange={(e) => setNewCatName(e.target.value)}
+                                    placeholder="Name (z.B. Disney)" style={{...styles.input, flex: 1, textAlign: 'left'}}
+                                />
+                                <button onClick={handleAddCategory} style={{...styles.joinButton, width:'auto', background:'var(--neon-purple)', color:'#fff', padding:'0 20px'}}>
+                                    <Plus size={20} />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* 2. IMPORT BOX */}
                         <div className="glass-panel" style={{padding:'20px', marginBottom:'20px', border:'1px dashed var(--neon-blue)'}}>
                             <h3>📦 Import: Alte Datenbank</h3>
                             <p style={{fontSize:'0.8rem', opacity:0.6, marginBottom:'10px'}}>Wähle deine `database.json` aus der originalen App.</p>
@@ -95,10 +147,31 @@ function HostView({ token }) {
                             </label>
                         </div>
 
-                        <h3>Deine Kategorien: {dbData.categories?.length || 0}</h3>
+                        {/* 3. KATEGORIEN LISTE */}
+                        <h3>Deine Quiz-Inhalte ({dbData.categories?.length || 0})</h3>
                         {dbData.categories?.map(cat => (
-                            <div key={cat.id} style={{padding:'10px', background:'rgba(255,255,255,0.05)', borderRadius:'10px', marginTop:'10px'}}>
-                                <strong>{cat.name}</strong> ({cat.songs?.length || 0} Songs)
+                            <div key={cat.id} style={styles.catItem}>
+                                {editingCatId === cat.id ? (
+                                    <div style={{display:'flex', gap:'10px', width:'100%'}}>
+                                        <input 
+                                            type="text" value={editCatName} onChange={(e) => setEditCatName(e.target.value)}
+                                            style={{...styles.input, flex: 1, textAlign: 'left', padding:'5px 10px'}}
+                                        />
+                                        <button onClick={() => handleUpdateCategory(cat.id)} style={{background:'none', border:'none', color:'#00ff73'}}><Check /></button>
+                                        <button onClick={() => setEditingCatId(null)} style={{background:'none', border:'none', color:'#ff2a2a'}}><X /></button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div>
+                                            <strong>{cat.name}</strong> 
+                                            <span style={{opacity:0.6, marginLeft:'10px', fontSize:'0.8rem'}}>({cat.songs?.length || 0} Songs)</span>
+                                        </div>
+                                        <div style={{display:'flex', gap:'15px', alignItems:'center'}}>
+                                            <button onClick={() => { setEditingCatId(cat.id); setEditCatName(cat.name); }} style={styles.iconBtn}><Edit2 size={16} /></button>
+                                            <button onClick={() => handleDeleteCategory(cat.id)} style={{...styles.iconBtn, color:'#ff4444'}}><Trash2 size={16} /></button>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -348,6 +421,22 @@ const styles = {
   },
   adminScrollArea: {
     flex: 1, overflowY: 'auto', paddingRight: '10px'
+  },
+  catItem: {
+    padding: '15px 20px', background: 'rgba(255,255,255,0.05)', borderRadius: '15px', 
+    marginTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+    border: '1px solid rgba(255,255,26,0.1)'
+  },
+  iconBtn: {
+    background: 'none', border: 'none', color: '#fff', cursor: 'pointer', opacity: 0.6,
+    transition: 'opacity 0.2s', padding: '5px'
+  },
+  input: {
+    width: '100%', padding: '10px 15px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.2)',
+    background: 'rgba(0,0,0,0.5)', color: 'white'
+  },
+  joinButton: {
+    padding: '12px 25px', borderRadius: '12px', border: 'none', fontWeight: 'bold', cursor: 'pointer'
   }
 };
 
