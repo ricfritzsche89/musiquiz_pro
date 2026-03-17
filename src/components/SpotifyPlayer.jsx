@@ -21,13 +21,9 @@ const SpotifyPlayer = forwardRef(({ token, currentSongId, onReady }, ref) => {
   }));
 
   useEffect(() => {
-    if (window.Spotify) {
-      setActive(true);
-      return;
-    }
-
-    // Callback auf window setzen – möglichst früh
-    window.onSpotifyWebPlaybackSDKReady = () => {
+    const initPlayer = () => {
+      if (!window.Spotify) return;
+      
       const player = new window.Spotify.Player({
         name: 'Musiquiz Pro Host',
         getOAuthToken: cb => { cb(token); },
@@ -50,14 +46,15 @@ const SpotifyPlayer = forwardRef(({ token, currentSongId, onReady }, ref) => {
       player.connect();
     };
 
-    // Nur laden, wenn noch nicht vorhanden
-    if (!document.getElementById('spotify-sdk')) {
-      const script = document.createElement("script");
-      script.id = 'spotify-sdk';
-      script.src = "https://sdk.scdn.co/spotify-player.js";
-      script.async = true;
-      document.body.appendChild(script);
+    if (window.spotifySDKReady) {
+      initPlayer();
+    } else {
+      window.addEventListener('spotifySDKReady', initPlayer);
     }
+
+    return () => {
+      window.removeEventListener('spotifySDKReady', initPlayer);
+    };
   }, [token]);
 
   if (!is_active) {
