@@ -11,13 +11,19 @@ export const useGameLogic = (roomCode = 'default') => {
         .from('game_sessions')
         .select('*')
         .eq('id', roomCode)
-        .single();
+        .maybeSingle(); // Verhindert 406 Fehler bei 0 Ergebnissen
+
+      if (error) {
+        console.error("Supabase Error:", error);
+        return;
+      }
 
       if (data) {
         setSession(data);
         setPlayers(data.players || {});
       } else {
         // Erstelle initiale Session falls nicht vorhanden
+        console.log("Erstelle neue Session...");
         await supabase.from('game_sessions').insert([{ id: roomCode }]);
       }
     };

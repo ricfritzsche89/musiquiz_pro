@@ -36,10 +36,15 @@ CREATE TABLE IF NOT EXISTS public.game_sessions (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- Realtime aktivieren (Wichtig für die Live-Synchronisation)
--- Dieser Befehl erstellt die Publikation, falls sie nicht existiert, 
--- und fügt alle unsere Tabellen hinzu. 
--- Das ersetzt den Klick im Dashboard!
+-- Realtime & Security
+ALTER TABLE public.game_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.songs ENABLE ROW LEVEL SECURITY;
+
+-- Policies für anonymen Zugriff (Wichtig!)
+CREATE POLICY "Allow all for anon" ON public.game_sessions FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all for anon" ON public.categories FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all for anon" ON public.songs FOR ALL USING (true) WITH CHECK (true);
 
 BEGIN;
   DROP PUBLICATION IF EXISTS supabase_realtime;
