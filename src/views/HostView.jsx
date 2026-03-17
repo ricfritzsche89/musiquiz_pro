@@ -70,6 +70,7 @@ function HostView({ token }) {
     };
     reader.readAsText(file);
   };
+  if (!session) return <div className="container" style={{display:'flex', justifyContent:'center', alignItems:'center', height:'100vh', color:'#fff'}}><h3>Initialisiere Musiquiz Pro...</h3></div>;
 
   // 1. LOBBY PHASE
   if (session.phase === 'lobby') {

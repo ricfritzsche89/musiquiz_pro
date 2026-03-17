@@ -21,11 +21,7 @@ const SpotifyPlayer = forwardRef(({ token, currentSongId, onReady }, ref) => {
   }));
 
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://sdk.scdn.co/spotify-player.js";
-    script.async = true;
-    document.body.appendChild(script);
-
+    // 1. Zuerst die Callback-Funktion definieren
     window.onSpotifyWebPlaybackSDKReady = () => {
       const player = new window.Spotify.Player({
         name: 'Musiquiz Pro Host',
@@ -49,6 +45,12 @@ const SpotifyPlayer = forwardRef(({ token, currentSongId, onReady }, ref) => {
 
       player.connect();
     };
+
+    // 2. Dann das Script laden (damit der Callback garantiert existiert)
+    const script = document.createElement("script");
+    script.src = "https://sdk.scdn.co/spotify-player.js";
+    script.async = true;
+    document.body.appendChild(script);
   }, [token]);
 
   if (!is_active) {
