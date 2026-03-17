@@ -387,7 +387,7 @@ const styles = {
     marginBottom: '2rem', display: 'flex', justifyContent: 'center'
   },
   headerLogo: {
-    height: '180px', width: 'auto', filter: 'drop-shadow(0 0 15px var(--neon-purple))'
+    height: '180px', width: 'auto', mixBlendMode: 'screen'
   },
   lobbyCard: {
     padding: '3rem', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '600px'

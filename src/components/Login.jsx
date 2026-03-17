@@ -10,6 +10,14 @@ function Login() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '2rem' }}>
       <h2 style={{ color: 'white', letterSpacing: '2px' }}>Bereit fürs Pro-Quiz?</h2>
+        <motion.div 
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          style={{ marginBottom: '40px' }}
+        >
+          <img src="logo.png" alt="Musiquiz Pro" style={{ height: '280px', mixBlendMode: 'screen' }} />
+        </motion.div>
       <button 
         onClick={handleLogin}
         style={{
