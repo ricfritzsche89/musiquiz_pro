@@ -30,7 +30,10 @@ function ControllerView() {
     return (
       <div className="container" style={styles.container}>
         <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="glass-panel" style={styles.card}>
-          <h1 style={{ marginBottom: '20px', textAlign: 'center' }}>MusiQuiz <span style={{color: 'var(--neon-blue)'}}>Join</span></h1>
+          <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+            <img src="logo.png" alt="Musiquiz Pro" style={{ height: '100px', filter: 'drop-shadow(0 0 10px var(--neon-blue))' }} />
+            <h2 style={{marginTop: '10px'}}>MusiQuiz <span style={{color: 'var(--neon-blue)'}}>Join</span></h2>
+          </div>
           <form onSubmit={handleJoin} style={styles.form}>
             <input 
               type="text" placeholder="Dein Name" value={name} onChange={(e) => setName(e.target.value)}

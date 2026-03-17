@@ -178,7 +178,9 @@ function HostView({ token }) {
                 </div>
             </div>
         )}
-        <h1 style={styles.logo}>Musi<span style={{ color: 'var(--neon-purple)' }}>Quiz</span> <span style={{fontSize: '1.5rem', verticalAlign: 'middle', opacity: 0.5}}>PRO</span></h1>
+        <div style={styles.logoContainer}>
+            <img src="logo.png" alt="Musiquiz Pro" style={styles.headerLogo} />
+        </div>
         
         <div className="glass-panel" style={styles.lobbyCard}>
           <h2>Tritt der Lobby bei!</h2>
@@ -381,8 +383,11 @@ const styles = {
   container: {
     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: '2rem'
   },
-  logo: {
-    fontSize: '5rem', fontWeight: '900', letterSpacing: '5px', marginBottom: '3rem', textShadow: '0 0 20px var(--neon-purple)', color: '#fff'
+  logoContainer: {
+    marginBottom: '2rem', display: 'flex', justifyContent: 'center'
+  },
+  headerLogo: {
+    height: '180px', width: 'auto', filter: 'drop-shadow(0 0 15px var(--neon-purple))'
   },
   lobbyCard: {
     padding: '3rem', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '600px'
