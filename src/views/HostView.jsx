@@ -419,7 +419,7 @@ const styles = {
     marginBottom: '2rem', display: 'flex', justifyContent: 'center'
   },
   headerLogo: {
-    height: '900px', width: 'auto', mixBlendMode: 'screen', filter: 'contrast(1.1)'
+    height: '300px', width: 'auto', mixBlendMode: 'screen', filter: 'contrast(1.1)'
   },
   lobbyCard: {
     padding: '3rem', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '600px'
