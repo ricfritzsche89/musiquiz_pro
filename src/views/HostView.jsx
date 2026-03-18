@@ -416,13 +416,13 @@ const styles = {
     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: '2rem'
   },
   logoContainer: {
-    marginBottom: '2rem', display: 'flex', justifyContent: 'center'
+    marginBottom: '1rem', marginTop: '-50px', display: 'flex', justifyContent: 'center'
   },
   headerLogo: {
     height: '300px', width: 'auto', mixBlendMode: 'screen', filter: 'contrast(1.1)'
   },
   lobbyCard: {
-    padding: '3rem', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '600px'
+    padding: '3rem', marginTop: '-50px', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '600px'
   },
   qrContainer: {
     padding: '20px', background: 'rgba(255,255,255,0.05)', borderRadius: '20px', marginBottom: '1rem'
