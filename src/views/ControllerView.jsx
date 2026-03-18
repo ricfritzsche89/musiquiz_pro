@@ -31,8 +31,8 @@ function ControllerView() {
       <div className="container" style={styles.container}>
         <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="glass-panel" style={styles.card}>
           <div style={{ textAlign: 'center', marginBottom: '10px' }}>
-            <img src="logo.png" alt="Musiquiz Pro" style={{ height: '240px', mixBlendMode: 'screen' }} />
-            <h2 style={{marginTop: '-20px'}}>Join Game</h2>
+            <img src="logo.png" alt="Musiquiz Pro" style={{ height: '500px', mixBlendMode: 'screen', filter: 'contrast(1.1)', marginTop: '-100px' }} />
+            <h2 style={{marginTop: '-80px'}}>Join Game</h2>
           </div>
           <form onSubmit={handleJoin} style={styles.form}>
             <input 
