@@ -5,7 +5,7 @@ import { useGameLogic } from '../hooks/useGameLogic';
 const COLORS = ['#ff2a2a', '#00d2ff', '#b026ff', '#00ff73', '#ffd700', '#ff007f'];
 
 function ControllerView() {
-  const { session, players, joinGame, voteCategory, submitBuzzer, submitMC, readyNextSong } = useGameLogic('default');
+  const { session, players, updateSession, joinGame, voteCategory, submitBuzzer, submitMC, readyNextSong } = useGameLogic('default');
   const [name, setName] = useState('');
   const [color, setColor] = useState(COLORS[0]);
   const [joined, setJoined] = useState(false);
@@ -65,7 +65,7 @@ function ControllerView() {
             <div style={{marginTop: '20px'}}>
               <p style={{marginBottom: '15px'}}>Königliche Hoheit, starte das Spiel!</p>
               <button 
-                onClick={() => useGameLogic().updateSession({ phase: 'voting'})} 
+                onClick={() => updateSession({ phase: 'voting'})} 
                 style={{...styles.joinButton, width: '100%', background: 'linear-gradient(45deg, var(--neon-purple), var(--neon-blue))', color: 'white'}}
               >
                 SPIEL STARTEN
@@ -117,7 +117,7 @@ function ControllerView() {
     return (
       <div className="container" style={styles.container}>
         <button 
-            onClick={() => { vibrate(50); useGameLogic().updateSession({ players: {...players, [myId]: {...players[myId], isReady: true}} }); }} 
+            onClick={() => { vibrate(50); updateSession({ players: {...players, [myId]: {...players[myId], isReady: true}} }); }} 
             className="glass-panel" style={{...styles.joinButton, width: '100%', background: '#00ff73', color: '#000'}}
         >
           ICH BIN BEREIT!
