@@ -16,7 +16,7 @@ function Login() {
           transition={{ duration: 0.8 }}
           style={{ marginBottom: '40px' }}
         >
-          <img src="logo.png" alt="Musiquiz Pro" style={{ height: '280px' }} />
+          <img src="logo.png" alt="Musiquiz Pro" style={{ height: '560px', mixBlendMode: 'screen' }} />
         </motion.div>
       <button 
         onClick={handleLogin}
